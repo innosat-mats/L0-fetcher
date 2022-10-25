@@ -16,6 +16,8 @@ pytest.xml
 *.orig
 .mypy_cache
 *.pyi
+build
+dist
 
 /.vscode
 system-tests/.X99-lock

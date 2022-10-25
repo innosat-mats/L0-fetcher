@@ -2,10 +2,17 @@
 from aws_cdk import Duration, Stack
 from aws_cdk.aws_events import Rule, Schedule
 from aws_cdk.aws_events_targets import LambdaFunction
-from aws_cdk.aws_lambda import Runtime, Function, InlineCode
+from aws_cdk.aws_iam import Effect, PolicyStatement
+from aws_cdk.aws_lambda import (
+    Architecture,
+    Code,
+    Function,
+    InlineCode,
+    LayerVersion,
+    Runtime,
+)
 from aws_cdk.aws_s3 import Bucket
 from constructs import Construct
-from aws_cdk.aws_iam import PolicyStatement, Effect
 
 
 class L0FetcherStack(Stack):
@@ -29,18 +36,29 @@ class L0FetcherStack(Stack):
             output_bucket_name,
         )
 
+        rclone_layer = LayerVersion(
+            self,
+            "RcloneLayer",
+            code=Code.from_asset("dist/layer-arm64.zip"),
+            compatible_architectures=[Architecture.ARM_64],
+            license="MIT",
+            description="Rclone"
+        )
+
         sync_lambda = Function(
             self,
             "L0FetcherLambda",
             code=InlineCode.from_asset("./fetcher/handlers"),
             handler="l0_fetcher.lambda_handler",
             timeout=lambda_timeout,
+            architecture=Architecture.ARM_64,
             runtime=Runtime.PYTHON_3_9,
             environment={
                 "RCLONE_CONFIG_SSM_NAME": config_ssm_name,
                 "OUTPUT_BUCKET": output_bucket_name,
                 "FULL_SYNC": str(full_sync),
             },
+            layers=[rclone_layer]
         )
 
         rule = Rule(
