@@ -21,7 +21,6 @@
             'S3Bucket': dict({
               'Fn::Sub': 'cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}',
             }),
-            'S3Key': '843e24b5fa6edd4c2f07971e75c2f9bc6a4abcf0e05c76d4228aad525fd9efbc.zip',
           }),
           'Environment': dict({
             'Variables': dict({

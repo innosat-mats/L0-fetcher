@@ -12,7 +12,10 @@ from fetcher.handlers.l0_fetcher import (
 def test_rclone_config_path():
     ssm_parameter = "param"
 
-    ssm_client = botocore.session.get_session().create_client('ssm')
+    ssm_client = botocore.session.get_session().create_client(
+        "ssm",
+        region_name="eu-north-1"
+    )
     stubber = Stubber(ssm_client)
     stubber.add_response(
         "get_parameter",
