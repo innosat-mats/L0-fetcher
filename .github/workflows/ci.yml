@@ -18,6 +18,10 @@ jobs:
             python3.10 -m pip install --upgrade pip
             pip install tox
 
+        - name: Build rclone
+          run: |
+            make build
+
         - name: Run unit tests
           run: |
             tox
