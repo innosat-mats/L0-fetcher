@@ -1,4 +1,3 @@
-
 from aws_cdk import App
 from aws_cdk.assertions import Template
 
