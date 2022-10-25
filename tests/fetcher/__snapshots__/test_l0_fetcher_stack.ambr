@@ -1,0 +1,207 @@
+# name: test_l0_fetcher_stack
+  dict({
+    'Parameters': dict({
+      'BootstrapVersion': dict({
+        'Default': '/cdk-bootstrap/hnb659fds/version',
+        'Description': 'Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]',
+        'Type': 'AWS::SSM::Parameter::Value<String>',
+      }),
+    }),
+    'Resources': dict({
+      'L0FetcherLambdaC2B4EF04': dict({
+        'DependsOn': list([
+          'L0FetcherLambdaServiceRoleDefaultPolicyA0AD43EF',
+          'L0FetcherLambdaServiceRoleB1195812',
+        ]),
+        'Properties': dict({
+          'Architectures': list([
+            'arm64',
+          ]),
+          'Code': dict({
+            'S3Bucket': dict({
+              'Fn::Sub': 'cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}',
+            }),
+            'S3Key': '843e24b5fa6edd4c2f07971e75c2f9bc6a4abcf0e05c76d4228aad525fd9efbc.zip',
+          }),
+          'Environment': dict({
+            'Variables': dict({
+              'FULL_SYNC': 'False',
+              'OUTPUT_BUCKET': 'output-bucket',
+              'RCLONE_CONFIG_SSM_NAME': 'config-ssm',
+            }),
+          }),
+          'Handler': 'l0_fetcher.lambda_handler',
+          'Layers': list([
+            dict({
+              'Ref': 'RcloneLayerAB93B090',
+            }),
+          ]),
+          'Role': dict({
+            'Fn::GetAtt': list([
+              'L0FetcherLambdaServiceRoleB1195812',
+              'Arn',
+            ]),
+          }),
+          'Runtime': 'python3.9',
+          'Timeout': 300,
+        }),
+        'Type': 'AWS::Lambda::Function',
+      }),
+      'L0FetcherLambdaScheduleAllowEventRuleraclambdaL0FetcherLambda72CFCD19CD7F9323': dict({
+        'Properties': dict({
+          'Action': 'lambda:InvokeFunction',
+          'FunctionName': dict({
+            'Fn::GetAtt': list([
+              'L0FetcherLambdaC2B4EF04',
+              'Arn',
+            ]),
+          }),
+          'Principal': 'events.amazonaws.com',
+          'SourceArn': dict({
+            'Fn::GetAtt': list([
+              'L0FetcherLambdaScheduleB407E78C',
+              'Arn',
+            ]),
+          }),
+        }),
+        'Type': 'AWS::Lambda::Permission',
+      }),
+      'L0FetcherLambdaScheduleB407E78C': dict({
+        'Properties': dict({
+          'ScheduleExpression': 'rate(12 hours)',
+          'State': 'ENABLED',
+          'Targets': list([
+            dict({
+              'Arn': dict({
+                'Fn::GetAtt': list([
+                  'L0FetcherLambdaC2B4EF04',
+                  'Arn',
+                ]),
+              }),
+              'Id': 'Target0',
+            }),
+          ]),
+        }),
+        'Type': 'AWS::Events::Rule',
+      }),
+      'L0FetcherLambdaServiceRoleB1195812': dict({
+        'Properties': dict({
+          'AssumeRolePolicyDocument': dict({
+            'Statement': list([
+              dict({
+                'Action': 'sts:AssumeRole',
+                'Effect': 'Allow',
+                'Principal': dict({
+                  'Service': 'lambda.amazonaws.com',
+                }),
+              }),
+            ]),
+            'Version': '2012-10-17',
+          }),
+          'ManagedPolicyArns': list([
+            dict({
+              'Fn::Join': list([
+                '',
+                list([
+                  'arn:',
+                  dict({
+                    'Ref': 'AWS::Partition',
+                  }),
+                  ':iam::aws:policy/service-role/AWSLambdaBasicExecutionRole',
+                ]),
+              ]),
+            }),
+          ]),
+        }),
+        'Type': 'AWS::IAM::Role',
+      }),
+      'L0FetcherLambdaServiceRoleDefaultPolicyA0AD43EF': dict({
+        'Properties': dict({
+          'PolicyDocument': dict({
+            'Statement': list([
+              dict({
+                'Action': list([
+                  's3:PutObject',
+                  's3:PutObjectLegalHold',
+                  's3:PutObjectRetention',
+                  's3:PutObjectTagging',
+                  's3:PutObjectVersionTagging',
+                  's3:Abort*',
+                ]),
+                'Effect': 'Allow',
+                'Resource': dict({
+                  'Fn::Join': list([
+                    '',
+                    list([
+                      'arn:',
+                      dict({
+                        'Ref': 'AWS::Partition',
+                      }),
+                      ':s3:::output-bucket/*',
+                    ]),
+                  ]),
+                }),
+              }),
+              dict({
+                'Action': 'ssm:GetParameter',
+                'Effect': 'Allow',
+                'Resource': 'arn:aws:ssm:*:*:parameterconfig-ssm',
+              }),
+            ]),
+            'Version': '2012-10-17',
+          }),
+          'PolicyName': 'L0FetcherLambdaServiceRoleDefaultPolicyA0AD43EF',
+          'Roles': list([
+            dict({
+              'Ref': 'L0FetcherLambdaServiceRoleB1195812',
+            }),
+          ]),
+        }),
+        'Type': 'AWS::IAM::Policy',
+      }),
+      'RcloneLayerAB93B090': dict({
+        'Properties': dict({
+          'CompatibleArchitectures': list([
+            'arm64',
+          ]),
+          'Content': dict({
+            'S3Bucket': dict({
+              'Fn::Sub': 'cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}',
+            }),
+            'S3Key': '21389f4fb8e2c818b7c13d04f02b0608975fc8b398aeb6c87276caf9348e3a1d.zip',
+          }),
+          'Description': 'Rclone',
+          'LicenseInfo': 'MIT',
+        }),
+        'Type': 'AWS::Lambda::LayerVersion',
+      }),
+    }),
+    'Rules': dict({
+      'CheckBootstrapVersion': dict({
+        'Assertions': list([
+          dict({
+            'Assert': dict({
+              'Fn::Not': list([
+                dict({
+                  'Fn::Contains': list([
+                    list([
+                      '1',
+                      '2',
+                      '3',
+                      '4',
+                      '5',
+                    ]),
+                    dict({
+                      'Ref': 'BootstrapVersion',
+                    }),
+                  ]),
+                }),
+              ]),
+            }),
+            'AssertDescription': "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
+          }),
+        ]),
+      }),
+    }),
+  })
+# ---
