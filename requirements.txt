@@ -8,17 +8,33 @@ attrs==22.1.0
     # via
     #   cattrs
     #   jsii
-aws-cdk-lib==2.45.0
+aws-cdk-lib==2.47.0
     # via -r requirements.in
-cattrs==22.1.0
+boto3==1.24.95
+    # via -r requirements.in
+boto3-stubs==1.24.95
+    # via types-boto3
+botocore==1.27.95
+    # via
+    #   boto3
+    #   s3transfer
+botocore-stubs==1.27.95
+    # via
+    #   boto3-stubs
+    #   types-botocore
+cattrs==22.2.0
     # via jsii
-constructs==10.1.130
+constructs==10.1.135
     # via
     #   -r requirements.in
     #   aws-cdk-lib
 exceptiongroup==1.0.0rc9
     # via cattrs
-jsii==1.69.0
+jmespath==1.0.1
+    # via
+    #   boto3
+    #   botocore
+jsii==1.70.0
     # via
     #   aws-cdk-lib
     #   constructs
@@ -28,7 +44,11 @@ publication==0.0.3
     #   constructs
     #   jsii
 python-dateutil==2.8.2
-    # via jsii
+    # via
+    #   botocore
+    #   jsii
+s3transfer==0.6.0
+    # via boto3
 six==1.16.0
     # via python-dateutil
 typeguard==2.13.3
@@ -36,5 +56,17 @@ typeguard==2.13.3
     #   aws-cdk-lib
     #   constructs
     #   jsii
+types-awscrt==0.14.7
+    # via botocore-stubs
+types-boto3==1.0.2
+    # via -r requirements.in
+types-botocore==1.0.2
+    # via -r requirements.in
+types-s3transfer==0.6.0.post4
+    # via boto3-stubs
 typing-extensions==4.4.0
-    # via jsii
+    # via
+    #   boto3-stubs
+    #   jsii
+urllib3==1.26.12
+    # via botocore
