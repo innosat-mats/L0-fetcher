@@ -13,7 +13,7 @@ def template():
 
     stack = L0FetcherStack(
         app,
-        "raclambda",
+        "lambdastack",
         "output-bucket",
         "config-ssm",
     )
@@ -66,7 +66,7 @@ class TestL0FetcherStack:
     def test_has_lambda_function(self, full_sync, timeout):
         stack = L0FetcherStack(
             App(),
-            "raclambda",
+            "lambdastack",
             "output-bucket",
             "config-ssm",
             full_sync,
@@ -101,7 +101,7 @@ class TestL0FetcherStack:
     def test_has_lambda_event(self, rate):
         stack = L0FetcherStack(
             App(),
-            "raclambda",
+            "lambdastack",
             "output-bucket",
             "config-ssm",
             lambda_schedule=Schedule.rate(Duration.hours(rate)),
