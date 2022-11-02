@@ -23,6 +23,7 @@ class L0FetcherStack(Stack):
         id: str,
         output_bucket_name: str,
         config_ssm_name: str,
+        source_path: str,
         full_sync: bool = False,
         lambda_timeout: Duration = Duration.seconds(300),
         lambda_schedule: Schedule = Schedule.rate(Duration.hours(12)),
@@ -55,6 +56,7 @@ class L0FetcherStack(Stack):
             runtime=Runtime.PYTHON_3_9,
             environment={
                 "RCLONE_CONFIG_SSM_NAME": config_ssm_name,
+                "SOURCE_PATH": source_path,
                 "OUTPUT_BUCKET": output_bucket_name,
                 "FULL_SYNC": str(full_sync),
             },

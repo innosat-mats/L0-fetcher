@@ -3,7 +3,6 @@ from pathlib import Path
 import botocore
 from botocore.stub import Stubber
 from fetcher.handlers.l0_fetcher import (
-    FTP_PATH,
     format_command,
     get_rclone_config_path,
 )
@@ -33,13 +32,13 @@ def test_rclone_config_path():
 
 
 def test_format_command_full_sync():
-    assert format_command("config", "bucket", True) == [
-        "rclone", "--config", "config", "sync", f"FTP:{FTP_PATH}", "S3:bucket"
+    assert format_command("config", "path", "bucket", True) == [
+        "rclone", "--config", "config", "sync", "FTP:path", "S3:bucket"
     ]
 
 
 def test_format_command_partial_sync():
-    assert format_command("config", "bucket", False) == [
-        "rclone", "--config", "config", "sync", f"FTP:{FTP_PATH}", "S3:bucket",
+    assert format_command("config", "path", "bucket", False) == [
+        "rclone", "--config", "config", "sync", "FTP:path", "S3:bucket",
         "--update", "--use-server-modtime", "--max-age", "7d"
     ]

@@ -10,6 +10,7 @@ L0FetcherStack(
     "L0FetcherStack",
     output_bucket_name="mats-l0-raw",
     config_ssm_name="/rclone/l0-fetcher",
+    source_path="/pub/OPS/TM/",
     full_sync=False,
 )
 

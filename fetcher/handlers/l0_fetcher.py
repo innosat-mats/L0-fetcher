@@ -9,8 +9,6 @@ import boto3
 BotoClient = Any
 Event = Dict[str, Any]
 
-FTP_PATH = "/pub/OPS/TM/"
-
 
 def get_rclone_config_path(
     ssm_client: BotoClient,
@@ -27,13 +25,18 @@ def get_rclone_config_path(
     return f.name
 
 
-def format_command(config_path: str, bucket: str, full_sync: bool) -> List[str]:
+def format_command(
+    config_path: str,
+    source_path: str,
+    bucket: str,
+    full_sync: bool,
+) -> List[str]:
     cmd = [
         "rclone",
         "--config",
         config_path,
         "sync",
-        f"FTP:{FTP_PATH}",
+        f"FTP:{source_path}",
         f"S3:{bucket}",
     ]
 
@@ -52,8 +55,9 @@ def lambda_handler(event: Event, _):
     )
     bucket = event.get("OUTPUT_BUCKET", "bucket")
     full_sync = event.get("FULL_SYNC", "FALSE").upper() != "FALSE"
+    source_path = event.get("SOURCE_PATH", "/")
 
-    cmd = format_command(config_path, bucket, full_sync)
+    cmd = format_command(config_path, source_path, bucket, full_sync)
 
     out = subprocess.run(cmd, capture_output=True)
     if out.returncode == 0:

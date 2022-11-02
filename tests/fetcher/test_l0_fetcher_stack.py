@@ -16,6 +16,7 @@ def template():
         "lambdastack",
         "output-bucket",
         "config-ssm",
+        "source_path",
     )
 
     return Template.from_stack(stack)
@@ -69,6 +70,7 @@ class TestL0FetcherStack:
             "lambdastack",
             "output-bucket",
             "config-ssm",
+            "source_path",
             full_sync,
             Duration.seconds(timeout),
         )
@@ -104,6 +106,7 @@ class TestL0FetcherStack:
             "lambdastack",
             "output-bucket",
             "config-ssm",
+            "source_path",
             lambda_schedule=Schedule.rate(Duration.hours(rate)),
         )
         template = Template.from_stack(stack)
