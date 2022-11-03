@@ -91,6 +91,6 @@ class L0FetcherStack(Stack):
         CfnOutput(
             self,
             "QueueOutput",
-            value=notification_queue.queue_name,
+            value=notification_queue.queue_arn,
             export_name=f"{id}OutputQueue",
         )
