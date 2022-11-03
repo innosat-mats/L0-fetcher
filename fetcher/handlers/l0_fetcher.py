@@ -17,8 +17,7 @@ class SyncError(Exception):
 
 
 def get_or_raise(variable_name: str) -> str:
-    var = os.environ.get(variable_name)
-    if var is None:
+    if (var := os.environ.get(variable_name)) is None:
         raise EnvironmentError(
             f"{variable_name} is a required environment variable"
         )
