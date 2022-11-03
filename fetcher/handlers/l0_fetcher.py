@@ -1,15 +1,14 @@
 import logging
+import os
 import subprocess
 import tempfile
-from typing import Any, List, Dict
+from typing import Any, Dict, List
 
 import boto3
 
-
 BotoClient = Any
 Event = Dict[str, Any]
-
-FTP_PATH = "/pub/OPS/TM/"
+Context = Any
 
 
 def get_rclone_config_path(
@@ -27,13 +26,18 @@ def get_rclone_config_path(
     return f.name
 
 
-def format_command(config_path: str, bucket: str, full_sync: bool) -> List[str]:
+def format_command(
+    config_path: str,
+    source_path: str,
+    bucket: str,
+    full_sync: bool,
+) -> List[str]:
     cmd = [
         "rclone",
         "--config",
         config_path,
         "sync",
-        f"FTP:{FTP_PATH}",
+        f"FTP:{source_path}",
         f"S3:{bucket}",
     ]
 
@@ -43,17 +47,18 @@ def format_command(config_path: str, bucket: str, full_sync: bool) -> List[str]:
     return cmd
 
 
-def lambda_handler(event: Event, _):
+def lambda_handler(event: Event, context: Context):
     ssm_client: BotoClient = boto3.client("ssm")
 
     config_path = get_rclone_config_path(
         ssm_client,
-        event.get("RCLONE_CONFIG_SSM_NAME", "config")
+        os.environ.get("RCLONE_CONFIG_SSM_NAME", "config")
     )
-    bucket = event.get("OUTPUT_BUCKET", "bucket")
-    full_sync = event.get("FULL_SYNC", "FALSE").upper() != "FALSE"
+    bucket = os.environ.get("OUTPUT_BUCKET", "bucket")
+    full_sync = os.environ.get("FULL_SYNC", "FALSE").upper() != "FALSE"
+    source_path = os.environ.get("SOURCE_PATH", "/")
 
-    cmd = format_command(config_path, bucket, full_sync)
+    cmd = format_command(config_path, source_path, bucket, full_sync)
 
     out = subprocess.run(cmd, capture_output=True)
     if out.returncode == 0:

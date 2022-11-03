@@ -27,6 +27,3 @@ region = eu-north-1
 ```
 
 3. Run `cdk deploy`
-
-# Test
-To update snapshots, run `tox -- --snapshot-update`
