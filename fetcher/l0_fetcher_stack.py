@@ -1,5 +1,5 @@
 
-from aws_cdk import Duration, Stack
+from aws_cdk import CfnOutput, Duration, Stack
 from aws_cdk.aws_events import Rule, Schedule
 from aws_cdk.aws_events_targets import LambdaFunction
 from aws_cdk.aws_iam import Effect, PolicyStatement
@@ -12,6 +12,7 @@ from aws_cdk.aws_lambda import (
     Runtime,
 )
 from aws_cdk.aws_s3 import Bucket
+from aws_cdk.aws_sqs import Queue
 from constructs import Construct
 
 
@@ -27,6 +28,7 @@ class L0FetcherStack(Stack):
         full_sync: bool = False,
         lambda_timeout: Duration = Duration.seconds(300),
         lambda_schedule: Schedule = Schedule.rate(Duration.hours(12)),
+        queue_retention: Duration = Duration.days(14),
         **kwargs
     ) -> None:
         super().__init__(scope, id, **kwargs)
@@ -35,6 +37,12 @@ class L0FetcherStack(Stack):
             self,
             "L0FetcherOutputBucket",
             output_bucket_name,
+        )
+
+        notification_queue = Queue(
+            self,
+            "L0FetcherNotificationQueue",
+            retention_period=queue_retention,
         )
 
         rclone_layer = LayerVersion(
@@ -59,6 +67,7 @@ class L0FetcherStack(Stack):
                 "SOURCE_PATH": source_path,
                 "OUTPUT_BUCKET": output_bucket_name,
                 "FULL_SYNC": str(full_sync),
+                "NOTIFICATION_QUEUE": notification_queue.queue_name,
             },
             layers=[rclone_layer]
         )
@@ -72,9 +81,16 @@ class L0FetcherStack(Stack):
         rule.add_target(LambdaFunction(sync_lambda))
 
         output_bucket.grant_put(sync_lambda)
-
+        notification_queue.grant_send_messages(sync_lambda)
         sync_lambda.add_to_role_policy(PolicyStatement(
             effect=Effect.ALLOW,
             actions=["ssm:GetParameter"],
             resources=[f"arn:aws:ssm:*:*:parameter{config_ssm_name}"]
         ))
+
+        CfnOutput(
+            self,
+            "QueueOutput",
+            value=notification_queue.queue_name,
+            export_name=f"{id}OutputQueue",
+        )
