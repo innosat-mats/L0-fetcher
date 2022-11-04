@@ -1,5 +1,4 @@
 import json
-import logging
 import os
 import subprocess
 import tempfile
@@ -89,7 +88,6 @@ def notify_queue(
     )
     if response["ResponseMetadata"]["HTTPStatusCode"] != 200:
         msg = f"Failed to notify queue: {response}"
-        logging.error(msg)
         raise SyncError(msg)
 
 
@@ -110,11 +108,7 @@ def lambda_handler(event: Event, context: Context):
 
     out = subprocess.run(cmd, capture_output=True)
     if out.returncode != 0:
-        logging.error(out.stderr)
         raise SyncError(out.stderr.decode())
-
-    logging.info("Files successfully synced")
 
     modified_files = parse_log(out.stderr.decode())
     notify_queue(sqs_client, notification_queue, modified_files, bucket)
-    logging.info("Notified queue")
