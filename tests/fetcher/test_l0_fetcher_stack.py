@@ -23,6 +23,13 @@ def template():
 
 
 class TestL0FetcherStack:
+    def test_has_sqs_queue(self, template):
+        template.has_resource_properties(
+            "AWS::SQS::Queue",
+            {
+                "MessageRetentionPeriod": 1209600
+            }
+        )
 
     def test_has_rclone_layer(self, template):
         template.has_resource_properties(
@@ -52,6 +59,14 @@ class TestL0FetcherStack:
                             "Effect": "Allow",
                         },
                         {
+                            "Action": [
+                                "sqs:SendMessage",
+                                "sqs:GetQueueAttributes",
+                                "sqs:GetQueueUrl",
+                            ],
+                            "Effect": "Allow",
+                        },
+                        {
                             "Action": "ssm:GetParameter",
                             "Effect": "Allow",
                         },
@@ -71,8 +86,8 @@ class TestL0FetcherStack:
             "output-bucket",
             "config-ssm",
             "source_path",
-            full_sync,
-            Duration.seconds(timeout),
+            full_sync=full_sync,
+            lambda_timeout=Duration.seconds(timeout),
         )
 
         template = Template.from_stack(stack)
@@ -83,8 +98,10 @@ class TestL0FetcherStack:
                 "Environment": {
                     "Variables": {
                         "RCLONE_CONFIG_SSM_NAME": "config-ssm",
+                        "SOURCE_PATH": "source_path",
                         "OUTPUT_BUCKET": "output-bucket",
                         "FULL_SYNC": str(full_sync),
+                        "NOTIFICATION_QUEUE": Match.any_value()
                     }
                 },
                 "Handler": "l0_fetcher.lambda_handler",
