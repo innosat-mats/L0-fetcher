@@ -5,7 +5,6 @@ from aws_cdk.aws_events_targets import LambdaFunction
 from aws_cdk.aws_iam import Effect, PolicyStatement
 from aws_cdk.aws_lambda import (
     Architecture,
-    Code,
     Function,
     InlineCode,
     LayerVersion,
@@ -25,6 +24,7 @@ class L0FetcherStack(Stack):
         output_bucket_name: str,
         config_ssm_name: str,
         source_path: str,
+        rclone_arn: str,
         full_sync: bool = False,
         lambda_timeout: Duration = Duration.seconds(300),
         lambda_schedule: Schedule = Schedule.rate(Duration.hours(12)),
@@ -45,13 +45,10 @@ class L0FetcherStack(Stack):
             retention_period=queue_retention,
         )
 
-        rclone_layer = LayerVersion(
+        rclone_layer = LayerVersion.from_layer_version_arn(
             self,
             "RcloneLayer",
-            code=Code.from_asset("dist/layer-arm64.zip"),
-            compatible_architectures=[Architecture.ARM_64],
-            license="MIT",
-            description="Rclone"
+            rclone_arn,
         )
 
         sync_lambda = Function(
@@ -60,7 +57,7 @@ class L0FetcherStack(Stack):
             code=InlineCode.from_asset("./fetcher/handlers"),
             handler="l0_fetcher.lambda_handler",
             timeout=lambda_timeout,
-            architecture=Architecture.ARM_64,
+            architecture=Architecture.X86_64,
             runtime=Runtime.PYTHON_3_9,
             environment={
                 "RCLONE_CONFIG_SSM_NAME": config_ssm_name,

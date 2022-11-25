@@ -2,10 +2,12 @@
 L0-fetcher syncs files from SFTP to AWS Buckets automatically by running [rclone](https://rclone.org/) wrapped in a scheduled lambda function.
 
 # Build rclone
-The lambda requires [rclone](https://rclone.org/) to be built locally before deploying. To do this, run
+The lambda requires a lambda layer with [rclone](https://rclone.org/) before deploying.
+To create one, first build locally by running
 ```
 make build
 ```
+Then upload the `.zip` archive as a Lambda layer and take note of its ARN.
 
 # Deploy
 1. Make sure your aws credentials are set up properly
