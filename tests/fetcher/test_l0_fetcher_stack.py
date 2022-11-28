@@ -17,6 +17,7 @@ def template():
         "output-bucket",
         "config-ssm",
         "source_path",
+        "rclone-arn",
     )
 
     return Template.from_stack(stack)
@@ -28,16 +29,6 @@ class TestL0FetcherStack:
             "AWS::SQS::Queue",
             {
                 "MessageRetentionPeriod": 1209600
-            }
-        )
-
-    def test_has_rclone_layer(self, template):
-        template.has_resource_properties(
-            "AWS::Lambda::LayerVersion",
-            {
-                "CompatibleArchitectures": [
-                    "arm64"
-                ]
             }
         )
 
@@ -86,6 +77,7 @@ class TestL0FetcherStack:
             "output-bucket",
             "config-ssm",
             "source_path",
+            "rclone-arn",
             full_sync=full_sync,
             lambda_timeout=Duration.seconds(timeout),
         )
@@ -94,7 +86,7 @@ class TestL0FetcherStack:
         template.has_resource_properties(
             "AWS::Lambda::Function",
             {
-                "Architectures": ["arm64"],
+                "Architectures": ["x86_64"],
                 "Environment": {
                     "Variables": {
                         "RCLONE_CONFIG_SSM_NAME": "config-ssm",
@@ -105,9 +97,7 @@ class TestL0FetcherStack:
                     }
                 },
                 "Handler": "l0_fetcher.lambda_handler",
-                "Layers": [{
-                    "Ref": Match.string_like_regexp(r"^RcloneLayer.*$")
-                }],
+                "Layers": ["rclone-arn"],
                 "Runtime": "python3.9",
                 "Timeout": timeout,
             }
@@ -124,6 +114,7 @@ class TestL0FetcherStack:
             "output-bucket",
             "config-ssm",
             "source_path",
+            "rclone-arn",
             lambda_schedule=Schedule.rate(Duration.hours(rate)),
         )
         template = Template.from_stack(stack)

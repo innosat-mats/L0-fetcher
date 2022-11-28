@@ -12,6 +12,7 @@ L0FetcherStack(
     output_bucket_name="mats-l0-raw-rac",
     config_ssm_name="/rclone/l0-fetcher",
     source_path="/pub/OPS/TM/Level0/",
+    rclone_arn="arn:aws:lambda:eu-north-1:968500071567:layer:RCLONE:1",
     full_sync=False,
 )
 
@@ -21,6 +22,7 @@ L0FetcherStack(
     output_bucket_name="mats-l0-raw-platform",
     config_ssm_name="/rclone/l0-fetcher",
     source_path="/pub/OPS/TM/Level1A/Platform/",
+    rclone_arn="arn:aws:lambda:eu-north-1:968500071567:layer:RCLONE:1",
     full_sync=False,
 )
 
