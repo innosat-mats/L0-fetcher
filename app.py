@@ -9,9 +9,9 @@ app = App()
 L0FetcherStack(
     app,
     "L0RACFetcherStack",
-    output_bucket_name="mats-l0-raw-rac",
+    output_bucket_name="ops-payload-level0-source",
     config_ssm_name="/rclone/l0-fetcher",
-    source_path="/pub/OPS/TM/Level0/",
+    source_path="/pub/OPS/TM/Level0/VC1/APID100/",
     rclone_arn="arn:aws:lambda:eu-north-1:968500071567:layer:RCLONE:1",
     full_sync=False,
 )
@@ -19,7 +19,7 @@ L0FetcherStack(
 L0FetcherStack(
     app,
     "L0PlatformFetcherStack",
-    output_bucket_name="mats-l0-raw-platform",
+    output_bucket_name="ops-platform-level1a-source",
     config_ssm_name="/rclone/l0-fetcher",
     source_path="/pub/OPS/TM/Level1A/Platform/",
     rclone_arn="arn:aws:lambda:eu-north-1:968500071567:layer:RCLONE:1",
