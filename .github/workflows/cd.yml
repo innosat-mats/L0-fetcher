@@ -2,9 +2,8 @@ name: L0-fetcher CD
 
 
 on:
-  push:
-    branches:
-      - main
+  release:
+    types: [released]
   workflow_dispatch:
 
 jobs:
