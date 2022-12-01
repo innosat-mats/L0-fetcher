@@ -58,6 +58,7 @@ class L0FetcherStack(Stack):
             handler="l0_fetcher.lambda_handler",
             timeout=lambda_timeout,
             architecture=Architecture.X86_64,
+            memory_size=256,
             runtime=Runtime.PYTHON_3_9,
             environment={
                 "RCLONE_CONFIG_SSM_NAME": config_ssm_name,
