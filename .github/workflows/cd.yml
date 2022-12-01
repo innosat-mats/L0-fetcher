@@ -1,6 +1,5 @@
 name: L0-fetcher CD
 
-
 on:
   release:
     types: [released]
@@ -10,26 +9,33 @@ jobs:
   aws_cdk:
     runs-on: ubuntu-latest
     steps:
-      - name: cdk deploy L0PlatformFetcherStack
-        uses: youyo/aws-cdk-github-actions@v2
-        with:
-          cdk_subcommand: 'deploy'
-          cdk_args: '--require-approval never'
-          cdk_stack: 'L0PlatformFetcherStack'
-          actions_comment: false
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
-      - name: cdk deploy L0RACFetcherStack
-        uses: youyo/aws-cdk-github-actions@v2
+      - name: Setup node 18
+        uses: actions/setup-node@v2
         with:
-          cdk_subcommand: 'deploy'
-          cdk_args: '--require-approval never'
-          cdk_stack: 'L0RACFetcherStack'
-          actions_comment: false
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+          node-version: "18"
+
+      - name: Install aws-cdk
+        run: |
+          npm install -g aws-cdk
+
+      - name: Setup python 3.9
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: Install python dependencies
+        run: |
+          python3.9 -m pip install -r requirements.txt
+
+      - name: Configure aws credentials
+        uses: aws-actions/configure-aws-credentials@master
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+
+      - name: Deploy stacks
+        run: cdk deploy --all --require-approval never
