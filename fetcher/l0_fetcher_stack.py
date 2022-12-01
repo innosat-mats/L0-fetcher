@@ -76,18 +76,13 @@ class L0FetcherStack(Stack):
         )
 
         rule.add_target(LambdaFunction(sync_lambda))
-        
+
         output_bucket.grant_put(sync_lambda)
         notification_queue.grant_send_messages(sync_lambda)
         sync_lambda.add_to_role_policy(PolicyStatement(
             effect=Effect.ALLOW,
             actions=["ssm:GetParameter"],
             resources=[f"arn:aws:ssm:*:*:parameter{config_ssm_name}"]
-        ))
-        sync_lambda.add_to_role_policy(PolicyStatement(
-            effect=Effect.ALLOW,
-            actions=["lambda:GetLayerVersion"],
-            resources=["arn:aws:lambda:*:*:layer:RCLONE:*"]
         ))
 
         CfnOutput(
