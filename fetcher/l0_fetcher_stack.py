@@ -29,6 +29,7 @@ class L0FetcherStack(Stack):
         lambda_timeout: Duration = Duration.seconds(300),
         lambda_schedule: Schedule = Schedule.rate(Duration.hours(12)),
         queue_retention: Duration = Duration.days(14),
+        queue_visibility_timeout: Duration = Duration.seconds(300),
         **kwargs
     ) -> None:
         super().__init__(scope, id, **kwargs)
@@ -43,6 +44,7 @@ class L0FetcherStack(Stack):
             self,
             "L0FetcherNotificationQueue",
             retention_period=queue_retention,
+            visibility_timeout=queue_visibility_timeout,
         )
 
         rclone_layer = LayerVersion.from_layer_version_arn(
