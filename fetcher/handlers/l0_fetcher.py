@@ -111,4 +111,5 @@ def lambda_handler(event: Event, context: Context):
         raise SyncError(out.stderr.decode())
 
     modified_files = parse_log(out.stderr.decode())
-    notify_queue(sqs_client, notification_queue, modified_files, bucket)
+    if len(modified_files) != 0:
+        notify_queue(sqs_client, notification_queue, modified_files, bucket)
