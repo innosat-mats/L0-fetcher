@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from aws_cdk import App, Duration
+from aws_cdk import App
 
 from fetcher.l0_fetcher_stack import L0FetcherStack
 
