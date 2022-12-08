@@ -27,9 +27,9 @@ class L0FetcherStack(Stack):
         rclone_arn: str,
         full_sync: bool = False,
         lambda_timeout: Duration = Duration.seconds(300),
-        lambda_schedule: Schedule = Schedule.rate(Duration.hours(12)),
+        lambda_schedule: Schedule = Schedule.rate(Duration.hours(1)),
         queue_retention: Duration = Duration.days(14),
-        queue_visibility_timeout: Duration = Duration.seconds(300),
+        queue_visibility_timeout: Duration = Duration.minutes(10),
         **kwargs
     ) -> None:
         super().__init__(scope, id, **kwargs)
