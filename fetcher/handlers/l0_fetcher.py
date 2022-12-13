@@ -84,7 +84,8 @@ def notify_queue(
         response = sqs_client.send_message(
             QueueUrl=notification_queue,
             MessageBody=json.dumps({
-                "object": f"{bucket}/{file}",
+                "object": file,
+                "bucket": bucket,
             })
         )
         if response["ResponseMetadata"]["HTTPStatusCode"] != 200:

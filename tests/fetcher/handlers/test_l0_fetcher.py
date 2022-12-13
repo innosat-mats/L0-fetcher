@@ -85,14 +85,16 @@ def test_notify_queue():
         "send_message",
         {"ResponseMetadata": {"HTTPStatusCode": 200}},
         expected_params={"QueueUrl": queue_url, "MessageBody": json.dumps({
-            "object": "bucket/file1",
+            "object": "file1",
+            "bucket": bucket,
         })}
     )
     stubber.add_response(
         "send_message",
         {"ResponseMetadata": {"HTTPStatusCode": 200}},
         expected_params={"QueueUrl": queue_url, "MessageBody": json.dumps({
-            "object": "bucket/file2",
+            "object": "file2",
+            "bucket": bucket,
         })}
     )
     stubber.activate()
@@ -119,14 +121,16 @@ def test_notify_queue_returns_failed():
         "send_message",
         response,
         expected_params={"QueueUrl": queue_url, "MessageBody": json.dumps({
-            "object": "bucket/file1",
+            "object": "file1",
+            "bucket": bucket,
         })}
     )
     stubber.add_response(
         "send_message",
         {"ResponseMetadata": {"HTTPStatusCode": 200}},
         expected_params={"QueueUrl": queue_url, "MessageBody": json.dumps({
-            "object": "bucket/file2",
+            "object": "file2",
+            "bucket": bucket,
         })}
     )
     stubber.activate()
