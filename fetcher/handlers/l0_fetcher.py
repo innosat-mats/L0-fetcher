@@ -78,17 +78,18 @@ def notify_queue(
     notification_queue: str,
     modified_files: List[str],
     bucket: str,
-) -> None:
-    response = sqs_client.send_message(
-        QueueUrl=notification_queue,
-        MessageBody=json.dumps({
-            "objects": modified_files,
-            "bucket": bucket,
-        })
-    )
-    if response["ResponseMetadata"]["HTTPStatusCode"] != 200:
-        msg = f"Failed to notify queue: {response}"
-        raise SyncError(msg)
+) -> List[str]:
+    fails: List[str] = []
+    for file in sorted(modified_files):
+        response = sqs_client.send_message(
+            QueueUrl=notification_queue,
+            MessageBody=json.dumps({
+                "object": f"{bucket}/{file}",
+            })
+        )
+        if response["ResponseMetadata"]["HTTPStatusCode"] != 200:
+            fails.append(file)
+    return fails
 
 
 def lambda_handler(event: Event, context: Context):
@@ -112,4 +113,13 @@ def lambda_handler(event: Event, context: Context):
 
     modified_files = parse_log(out.stderr.decode())
     if len(modified_files) != 0:
-        notify_queue(sqs_client, notification_queue, modified_files, bucket)
+        failed_files = notify_queue(
+            sqs_client,
+            notification_queue,
+            modified_files,
+            bucket,
+        )
+        if len(failed_files) != 0:
+            raise SyncError(
+                f"Failed to notify queue about synced files: {failed_files}"
+            )

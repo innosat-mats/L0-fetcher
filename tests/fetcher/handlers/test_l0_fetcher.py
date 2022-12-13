@@ -7,7 +7,6 @@ import botocore
 import pytest  # type: ignore
 from botocore.stub import Stubber
 from fetcher.handlers.l0_fetcher import (
-    SyncError,
     format_command,
     get_or_raise,
     get_rclone_config_path,
@@ -74,7 +73,7 @@ def test_parse_log():
 
 def test_notify_queue():
     queue_url = "queueurl"
-    list_of_files = ["files"]
+    list_of_files = ["file2", "file1"]
     bucket = "bucket"
 
     sqs_client = botocore.session.get_session().create_client(
@@ -86,19 +85,25 @@ def test_notify_queue():
         "send_message",
         {"ResponseMetadata": {"HTTPStatusCode": 200}},
         expected_params={"QueueUrl": queue_url, "MessageBody": json.dumps({
-            "objects": list_of_files,
-            "bucket": bucket,
+            "object": "bucket/file1",
         })}
-
+    )
+    stubber.add_response(
+        "send_message",
+        {"ResponseMetadata": {"HTTPStatusCode": 200}},
+        expected_params={"QueueUrl": queue_url, "MessageBody": json.dumps({
+            "object": "bucket/file2",
+        })}
     )
     stubber.activate()
 
-    notify_queue(sqs_client, queue_url, list_of_files, bucket)
+    res = notify_queue(sqs_client, queue_url, list_of_files, bucket)
+    assert res == []
 
 
-def test_notify_queue_raises():
+def test_notify_queue_returns_failed():
     queue_url = "queueurl"
-    list_of_files = ["files"]
+    list_of_files = ["file2", "file1"]
     bucket = "bucket"
 
     sqs_client = botocore.session.get_session().create_client(
@@ -114,12 +119,17 @@ def test_notify_queue_raises():
         "send_message",
         response,
         expected_params={"QueueUrl": queue_url, "MessageBody": json.dumps({
-            "objects": list_of_files,
-            "bucket": bucket,
+            "object": "bucket/file1",
         })}
-
+    )
+    stubber.add_response(
+        "send_message",
+        {"ResponseMetadata": {"HTTPStatusCode": 200}},
+        expected_params={"QueueUrl": queue_url, "MessageBody": json.dumps({
+            "object": "bucket/file2",
+        })}
     )
     stubber.activate()
 
-    with pytest.raises(SyncError, match=f'Failed to notify queue: {response}'):
-        notify_queue(sqs_client, queue_url, list_of_files, bucket)
+    res = notify_queue(sqs_client, queue_url, list_of_files, bucket)
+    assert res == ["file1"]
