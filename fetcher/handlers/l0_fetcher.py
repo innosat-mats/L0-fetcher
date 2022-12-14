@@ -86,7 +86,8 @@ def notify_queue(
             MessageBody=json.dumps({
                 "object": file,
                 "bucket": bucket,
-            })
+            }),
+            MessageGroupId="parquet",
         )
         if response["ResponseMetadata"]["HTTPStatusCode"] != 200:
             fails.append(file)

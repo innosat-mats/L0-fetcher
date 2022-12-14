@@ -84,18 +84,26 @@ def test_notify_queue():
     stubber.add_response(
         "send_message",
         {"ResponseMetadata": {"HTTPStatusCode": 200}},
-        expected_params={"QueueUrl": queue_url, "MessageBody": json.dumps({
-            "object": "file1",
-            "bucket": bucket,
-        })}
+        expected_params={
+            "QueueUrl": queue_url,
+            "MessageBody": json.dumps({
+                "object": "file1",
+                "bucket": bucket,
+            }),
+            "MessageGroupId": "parquet",
+        }
     )
     stubber.add_response(
         "send_message",
         {"ResponseMetadata": {"HTTPStatusCode": 200}},
-        expected_params={"QueueUrl": queue_url, "MessageBody": json.dumps({
-            "object": "file2",
-            "bucket": bucket,
-        })}
+        expected_params={
+            "QueueUrl": queue_url,
+            "MessageBody": json.dumps({
+                "object": "file2",
+                "bucket": bucket,
+            }),
+            "MessageGroupId": "parquet",
+        }
     )
     stubber.activate()
 
@@ -120,18 +128,26 @@ def test_notify_queue_returns_failed():
     stubber.add_response(
         "send_message",
         response,
-        expected_params={"QueueUrl": queue_url, "MessageBody": json.dumps({
-            "object": "file1",
-            "bucket": bucket,
-        })}
+        expected_params={
+            "QueueUrl": queue_url,
+            "MessageBody": json.dumps({
+                "object": "file1",
+                "bucket": bucket,
+            }),
+            "MessageGroupId": "parquet",
+        }
     )
     stubber.add_response(
         "send_message",
         {"ResponseMetadata": {"HTTPStatusCode": 200}},
-        expected_params={"QueueUrl": queue_url, "MessageBody": json.dumps({
-            "object": "file2",
-            "bucket": bucket,
-        })}
+        expected_params={
+            "QueueUrl": queue_url,
+            "MessageBody": json.dumps({
+                "object": "file2",
+                "bucket": bucket,
+            }),
+            "MessageGroupId": "parquet",
+        }
     )
     stubber.activate()
 
