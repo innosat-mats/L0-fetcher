@@ -11,7 +11,7 @@ from aws_cdk.aws_lambda import (
     Runtime,
 )
 from aws_cdk.aws_s3 import Bucket
-from aws_cdk.aws_sqs import Queue
+from aws_cdk.aws_sqs import DeadLetterQueue, Queue
 from constructs import Construct
 
 
@@ -47,6 +47,16 @@ class L0FetcherStack(Stack):
             retention_period=queue_retention,
             visibility_timeout=queue_visibility_timeout,
             content_based_deduplication=True,
+            dead_letter_queue=DeadLetterQueue(
+                max_receive_count=1,
+                queue=Queue(
+                    self,
+                    "FailedL0FetcherQueue",
+                    retention_period=queue_retention,
+                    fifo=True,
+                    content_based_deduplication=True,
+                ),
+            ),
         )
 
         rclone_layer = LayerVersion.from_layer_version_arn(
