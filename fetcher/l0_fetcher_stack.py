@@ -46,6 +46,7 @@ class L0FetcherStack(Stack):
             fifo=True,
             retention_period=queue_retention,
             visibility_timeout=queue_visibility_timeout,
+            content_based_deduplication=True,
         )
 
         rclone_layer = LayerVersion.from_layer_version_arn(
