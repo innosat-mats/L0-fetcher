@@ -13,7 +13,7 @@ L0FetcherStack(
     config_ssm_name="/rclone/l0-fetcher",
     source_path="/pub/OPS/TM/Level0/VC1/APID100/",
     rclone_arn="arn:aws:lambda:eu-north-1:671150066425:layer:rclone-amd64:1",
-    full_sync=False,
+    full_sync=True,
 )
 
 L0FetcherStack(
@@ -23,7 +23,7 @@ L0FetcherStack(
     config_ssm_name="/rclone/l0-fetcher",
     source_path="/pub/OPS/TM/Level1A/Platform/",
     rclone_arn="arn:aws:lambda:eu-north-1:671150066425:layer:rclone-amd64:1",
-    full_sync=False,
+    full_sync=True,
 )
 
 app.synth()
