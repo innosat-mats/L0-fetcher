@@ -19,9 +19,9 @@ L0FetcherStack(
 L0FetcherStack(
     app,
     "L0PlatformFetcherStack",
-    output_bucket_name="ops-platform-level1a-source",
+    output_bucket_name="ops-platform-level1a-source-v0.1",
     config_ssm_name="/rclone/l0-fetcher",
-    source_path="/pub/OPS/TM/Level1A/Platform/",
+    source_path="/pub/OPS/TM/Level1A/Platform_v1/",
     rclone_arn="arn:aws:lambda:eu-north-1:671150066425:layer:rclone-amd64:1",
     full_sync=True,
 )
