@@ -76,4 +76,4 @@ def rerun(
     sqs_client = session.client("sqs", region_name=region)
     queue_url = get_queue_url(sqs_client, queue_arn)
 
-    notify_queue(sqs_client, queue_url, [files[-1]], service.bucket)
+    notify_queue(sqs_client, queue_url, files, service.bucket)
