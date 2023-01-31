@@ -36,7 +36,7 @@ def get_queue_arn(
     for e in exports:
         if e["Name"] == cfn_key:
             return e["Value"]
-    raise KeyError(f"key {cfn_key} not found in Cloud formation Exports: {exports}")
+    raise KeyError(f"key {cfn_key} not found in Cloud formation Exports")
 
 
 def get_queue_url(
