@@ -15,7 +15,7 @@ class FetcherService(Enum):
         "L0RACFetcherStackOutputQueue",  # cfn-key
     )
     H5_PLATFORM = (
-        "ops-platform-level1a-source",  # bucket
+        "ops-platform-level1a-source-v0.1",  # bucket
         "L0PlatformFetcherStackOutputQueue",  # cfn-key
     )
 
