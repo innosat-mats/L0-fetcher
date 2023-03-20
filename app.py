@@ -26,4 +26,14 @@ L0FetcherStack(
     full_sync=True,
 )
 
+L0FetcherStack(
+    app,
+    "L0ScheduleFetcherStack",
+    output_bucket_name="ops-schedule-level0-source-v0.1",
+    config_ssm_name="/rclone/l0-fetcher",
+    source_path="/pub/Timeline/Schedule/",
+    rclone_arn="arn:aws:lambda:eu-north-1:671150066425:layer:rclone-amd64:1",
+    full_sync=True,
+)
+
 app.synth()
