@@ -29,7 +29,7 @@ class L0FetcherStack(Stack):
     def __init__(
         self,
         scope: Construct,
-        stack_id: str,
+        id: str,
         output_bucket_name: str,
         config_ssm_name: str,
         source_path: str,
@@ -41,7 +41,7 @@ class L0FetcherStack(Stack):
         queue_visibility_timeout: Duration = Duration.minutes(10),
         **kwargs
     ) -> None:
-        super().__init__(scope, stack_id, **kwargs)
+        super().__init__(scope, id, **kwargs)
 
         output_bucket = Bucket.from_bucket_name(
             self,
@@ -113,5 +113,5 @@ class L0FetcherStack(Stack):
             self,
             "QueueOutput",
             value=notification_queue.queue_arn,
-            export_name=TEMPLATE_OUTPUT_QUEUE.format(stack_name=stack_id),
+            export_name=TEMPLATE_OUTPUT_QUEUE.format(stack_name=id),
         )
