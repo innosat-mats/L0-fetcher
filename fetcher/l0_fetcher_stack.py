@@ -15,12 +15,21 @@ from aws_cdk.aws_sqs import DeadLetterQueue, Queue
 from constructs import Construct
 
 
+RAC_BUCKET = "ops-payload-level0-source"
+RAC_STACK = "L0RACFetcherStack"
+PLATFORM_BUCKET = "ops-platform-level1a-source-v0.1"
+PLATFORM_STACK = "L0PlatformFetcherStack"
+SCHEDULE_BUCKET = "ops-schedule-source-v0.1"
+SCHEDULE_STACK = "L0ScheduleFetcherStack"
+TEMPLATE_OUTPUT_QUEUE = "{stack_name}OutputQueue"
+
+
 class L0FetcherStack(Stack):
 
     def __init__(
         self,
         scope: Construct,
-        id: str,
+        stack_id: str,
         output_bucket_name: str,
         config_ssm_name: str,
         source_path: str,
@@ -32,7 +41,7 @@ class L0FetcherStack(Stack):
         queue_visibility_timeout: Duration = Duration.minutes(10),
         **kwargs
     ) -> None:
-        super().__init__(scope, id, **kwargs)
+        super().__init__(scope, stack_id, **kwargs)
 
         output_bucket = Bucket.from_bucket_name(
             self,
@@ -104,5 +113,5 @@ class L0FetcherStack(Stack):
             self,
             "QueueOutput",
             value=notification_queue.queue_arn,
-            export_name=f"{id}OutputQueue",
+            export_name=TEMPLATE_OUTPUT_QUEUE.format(stack_name=stack_id),
         )

@@ -6,21 +6,30 @@ from fetcher.handlers.l0_fetcher import (
     notify_queue,
     BotoClient,
 )
+from fetcher.l0_fetcher_stack import (
+    PLATFORM_BUCKET,
+    PLATFORM_STACK,
+    RAC_BUCKET,
+    RAC_STACK,
+    SCHEDULE_BUCKET,
+    SCHEDULE_STACK,
+    TEMPLATE_OUTPUT_QUEUE,
+)
 
 
 @unique
 class FetcherService(Enum):
     RAC_PAYLOAD = (
-        "ops-payload-level0-source",  # bucket
-        "L0RACFetcherStackOutputQueue",  # cfn-key
+        RAC_BUCKET,  # bucket
+        TEMPLATE_OUTPUT_QUEUE.format(stack_name=RAC_STACK)  # cfn-key
     )
     H5_PLATFORM = (
-        "ops-platform-level1a-source-v0.1",  # bucket
-        "L0PlatformFetcherStackOutputQueue",  # cfn-key
+        PLATFORM_BUCKET,  # bucket
+        TEMPLATE_OUTPUT_QUEUE.format(stack_name=PLATFORM_STACK)  # cfn-key
     )
     SCHEDULE = (
-        "ops-schedule-source-v0.1",  # bucket
-        "L0ScheduleFetcherStackOutputQueue",  # cfn-key
+        SCHEDULE_BUCKET,  # bucket
+        TEMPLATE_OUTPUT_QUEUE.format(stack_name=SCHEDULE_STACK)  # cfn-key
     )
 
     @property
