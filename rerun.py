@@ -18,6 +18,10 @@ class FetcherService(Enum):
         "ops-platform-level1a-source-v0.1",  # bucket
         "L0PlatformFetcherStackOutputQueue",  # cfn-key
     )
+    SCHEDULE = (
+        "ops-schedule-source-v0.1",  # bucket
+        "L0ScheduleFetcherStackOutputQueue",  # cfn-key
+    )
 
     @property
     def bucket(self) -> str:
