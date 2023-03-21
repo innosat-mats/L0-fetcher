@@ -19,7 +19,7 @@ RAC_BUCKET = "ops-payload-level0-source"
 RAC_STACK = "L0RACFetcherStack"
 PLATFORM_BUCKET = "ops-platform-level1a-source-v0.1"
 PLATFORM_STACK = "L0PlatformFetcherStack"
-SCHEDULE_BUCKET = "ops-schedule-source-v0.1"
+SCHEDULE_BUCKET = "ops-mats-schedule-source-v0.1"
 SCHEDULE_STACK = "L0ScheduleFetcherStack"
 TEMPLATE_OUTPUT_QUEUE = "{stack_name}OutputQueue"
 
