@@ -39,7 +39,7 @@ L0FetcherStack(
     SCHEDULE_STACK,
     output_bucket_name=SCHEDULE_BUCKET,
     config_ssm_name="/rclone/l0-fetcher",
-    source_path="/pub/Timeline/Schedule/",
+    source_path="/pub/Timeline/Schedules/",
     rclone_arn="arn:aws:lambda:eu-north-1:671150066425:layer:rclone-amd64:1",
     full_sync=True,
 )
