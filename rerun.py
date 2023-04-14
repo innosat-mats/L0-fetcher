@@ -66,22 +66,34 @@ def get_queue_url(
 
 def get_objects(
     s3_client: BotoClient,
-    bucket: str
+    bucket: str,
+    prefix: str = "",
 ) -> list[str]:
-    return sorted([
-        f["Key"] for f in s3_client.list_objects(Bucket=bucket)['Contents']
-    ])
+    results = s3_client.list_objects_v2(Bucket=bucket, Prefix=prefix)
+    keys = [f["Key"] for f in results["Contents"]]
+
+    # If records ar numerous AWS returns partial data, loop until we get all:
+    while results["IsTruncated"]:
+        results = s3_client.list_objects_v2(
+            Bucket=bucket,
+            ContinuationToken=results["NextContinuationToken"],
+            Prefix=prefix,
+        )
+        keys.extend([f["Key"] for f in results["Contents"]])
+
+    return sorted(keys)
 
 
 def rerun(
     service: FetcherService,
+    prefix: str = "",
     profile: str = "mats",
     region: str = "eu-north-1",
 ):
     session = boto3.session.Session(profile_name=profile)
 
     s3_client = session.client('s3')
-    files = get_objects(s3_client, service.bucket)
+    files = get_objects(s3_client, service.bucket, prefix)
 
     cfn_client = session.client('cloudformation', region_name=region)
     queue_arn = get_queue_arn(cfn_client, service.queue_key)
